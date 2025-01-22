@@ -34,5 +34,48 @@ Ensure you have the following installed:
 1. **Clone the repository:**
 
    ```bash
-   git clone 
-   cd 
+   git clone https://github.com/AmandracOP/AVCA.git
+   cd AVCA
+2. **Make an eniornment**
+ 
+    ```bash
+    python -m venv navya
+    source navya/bin/activate #for linux
+    navya/Scripts/activate #for windows 
+
+3. **Install all the dependencies**
+
+    ```bash
+    pip install -r requirements.txt
+
+4. **Run Streamlit App**
+    ```bash
+    streamlit run src/webapp/app.py  
+
+## Usage
+1. **Train the Model**
+
+    Upload multiple audio files of your voice (.wav or .mp3).
+    Click on the "Train Model" button.
+    Wait for the training process to complete (takes a few minutes depending on your system).
+
+2. **Convert Audio**
+
+    Upload an audio file you want to convert.
+    Click on the "Convert" button.
+    Download the converted audio.    
+## Technical Details
+### Architecture
+
+    1. Feature Extraction: Uses Wav2Vec 2.0 for audio embedding.
+    Voice Conversion Model:
+        A custom feedforward neural network trained to transform voice features.
+        Compatible with pre-trained generative models (e.g., HiFi-GAN).
+    2. Audio Reconstruction:
+        Uses vocoders like HiFi-GAN or WaveGlow for converting embeddings to waveforms.
+
+### Optimization
+
+    Mixed precision training using torch.cuda.amp.
+    GPU acceleration for faster training and inference.
+    Modular design for easy integration of future models.
