@@ -1,0 +1,9 @@
+streamlit
+fastapi
+torch
+torchaudio
+librosa
+numpy
+soundfile
+python-multipart
+uvicorn
