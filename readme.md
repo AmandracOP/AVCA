@@ -79,3 +79,7 @@ Ensure you have the following installed:
     Mixed precision training using torch.cuda.amp.
     GPU acceleration for faster training and inference.
     Modular design for easy integration of future models.
+
+## License
+
+**This project is licensed under the MIT License. See the LICENSE file for details.**
