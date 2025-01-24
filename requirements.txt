@@ -8,3 +8,5 @@ soundfile
 python-multipart
 uvicorn
 transformers
+pydub
+pathlib
