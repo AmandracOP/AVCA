@@ -9,5 +9,3 @@ python-multipart
 uvicorn
 transformers
 pydub
-pathlib
-tempfile
