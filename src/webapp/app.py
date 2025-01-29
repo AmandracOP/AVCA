@@ -9,6 +9,10 @@ from pathlib import Path
 from pydub import AudioSegment
 
 
+# Set audio backend
+torchaudio.set_audio_backend("soundfile")
+
+
 class VoiceConverter:
     def __init__(self):
         self.sample_rate = 16000
@@ -22,7 +26,7 @@ class VoiceConverter:
     def preprocess_audio(self, audio_path):
         """Preprocess audio into embeddings using Wav2Vec2."""
         try:
-            waveform, sr = torchaudio.load(audio_path, backend="sox_io")
+            waveform, sr = torchaudio.load(audio_path)
             waveform = Resample(sr, self.sample_rate)(waveform)
             if waveform.size(0) > 1:
                 waveform = torch.mean(waveform, dim=0, keepdim=True)  # Convert to mono

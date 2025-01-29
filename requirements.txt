@@ -9,3 +9,4 @@ python-multipart
 uvicorn
 transformers
 pydub
+soundfile
