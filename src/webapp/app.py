@@ -22,17 +22,18 @@ class VoiceConverter:
     def preprocess_audio(self, audio_path):
         """Preprocess audio into embeddings using Wav2Vec2."""
         try:
-            waveform, sr = torchaudio.load(audio_path)
+            waveform, sr = torchaudio.load(audio_path, backend="sox_io")
             waveform = Resample(sr, self.sample_rate)(waveform)
             if waveform.size(0) > 1:
                 waveform = torch.mean(waveform, dim=0, keepdim=True)  # Convert to mono
 
-            # Ensure waveform shape is correct for the processor
             waveform = waveform.squeeze()  # Shape: [sequence_length]
-            waveform = waveform.unsqueeze(0)  # Shape: [1, sequence_length] (batch size 1)
+            waveform = waveform.unsqueeze(0)  # Shape: [1, sequence_length]
 
             with torch.no_grad():
-                inputs = self.processor(waveform, sampling_rate=self.sample_rate, return_tensors="pt", padding=True)
+                inputs = self.processor(
+                    waveform, sampling_rate=self.sample_rate, return_tensors="pt", padding=True
+                )
                 embeddings = self.feature_extractor(inputs.input_values.to(self.device)).last_hidden_state
             return embeddings
         except Exception as e:
@@ -49,10 +50,11 @@ class VoiceConverter:
             st.error("No valid training data available.")
             return
 
+        input_dim = training_data[0].size(-1)
         self.model = torch.nn.Sequential(
-            torch.nn.Linear(training_data[0].size(-1), 512),
+            torch.nn.Linear(input_dim, 512),
             torch.nn.ReLU(),
-            torch.nn.Linear(512, training_data[0].size(-1))
+            torch.nn.Linear(512, input_dim)
         ).to(self.device)
 
         criterion = torch.nn.MSELoss()
@@ -88,7 +90,7 @@ class VoiceConverter:
         with torch.no_grad():
             converted_embeddings = self.model(input_embeddings.to(self.device))
 
-        # Placeholder for vocoder integration (replace this with actual vocoder usage)
+        # Placeholder for vocoder integration (replace with actual vocoder usage)
         st.warning("This code assumes a vocoder like HiFi-GAN is integrated for reconstruction.")
         waveform = torch.randn(1, int(self.sample_rate * 5))  # Dummy waveform for testing purposes
         sf.write(output_path, waveform.cpu().numpy(), self.sample_rate)
@@ -143,7 +145,7 @@ def main():
 
         if training_files and st.button("Train Model"):
             temp_paths = [convert_to_wav(file) for file in training_files]
-            temp_paths = [path for path in temp_paths if path]  # Filter out failed conversions
+            temp_paths = [path for path in temp_paths if path]
 
             try:
                 vc.train_model(temp_paths)
