@@ -27,6 +27,10 @@ class VoiceConverter:
             if waveform.size(0) > 1:
                 waveform = torch.mean(waveform, dim=0, keepdim=True)  # Convert to mono
 
+            # Ensure waveform shape is correct for the processor
+            waveform = waveform.squeeze()  # Shape: [sequence_length]
+            waveform = waveform.unsqueeze(0)  # Shape: [1, sequence_length] (batch size 1)
+
             with torch.no_grad():
                 inputs = self.processor(waveform, sampling_rate=self.sample_rate, return_tensors="pt", padding=True)
                 embeddings = self.feature_extractor(inputs.input_values.to(self.device)).last_hidden_state
